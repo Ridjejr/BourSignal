@@ -129,3 +129,24 @@ function afficherErreur(message) {
 function cacherErreur() {
   searchError.classList.add("hidden");
 }
+
+// Actifs populaires affichés au chargement
+const ACTIFS_POPULAIRES = ["AAPL", "MSFT", "NVDA", "TSLA", "SPY", "QQQ"];
+
+async function chargerActifsPopulaires() {
+  for (const ticker of ACTIFS_POPULAIRES) {
+    try {
+      const response = await apiFetch(`${API_URL}/actifs/search?q=${ticker}`);
+      const data = await response.json();
+
+      if (response.ok) {
+        ajouterCarte(data.actif, data.cotation);
+      }
+    } catch (error) {
+      console.error(`Erreur chargement ${ticker}:`, error);
+    }
+  }
+}
+
+// Charger les actifs populaires au démarrage
+chargerActifsPopulaires();
