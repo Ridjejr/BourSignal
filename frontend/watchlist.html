@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BourSignal — Ma Watchlist</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/tailwind.config.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body class="bg-bg-deep font-sans text-text-1 min-h-screen">
+    <nav
+      class="bg-bg-deep border-b border-border px-12 flex items-center gap-8 sticky top-0 z-50"
+    >
+      <div class="font-mono text-accent font-bold text-lg py-4 mr-4">
+        BOUR<span class="text-text-1">SIGNAL</span>
+      </div>
+      <a
+        href="index.html"
+        class="text-text-2 text-sm font-medium py-5 border-b-2 border-transparent hover:text-text-1"
+        >Accueil</a
+      >
+      <a
+        href="watchlist.html"
+        class="text-text-1 text-sm font-medium py-5 border-b-2 border-accent"
+        >Watchlist</a
+      >
+      <a
+        href="alertes.html"
+        class="text-text-2 text-sm font-medium py-5 border-b-2 border-transparent hover:text-text-1"
+        >Alertes</a
+      >
+      <div class="ml-auto flex items-center gap-2">
+        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+        <span class="text-text-2 text-sm">LIVE</span>
+      </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-8 py-12">
+      <div class="flex justify-between items-center mb-8">
+        <div>
+          <h1 class="text-2xl font-semibold">Ma Watchlist</h1>
+          <p class="text-text-2 text-sm">Actifs en cours de surveillance</p>
+        </div>
+        <span
+          id="watchlist-count"
+          class="bg-bg-surface text-accent font-mono text-sm px-3 py-1 rounded-full border border-border"
+        ></span>
+      </div>
+
+      <div id="watchlist-empty" class="text-center py-16 hidden">
+        <p class="text-text-2">
+          Ton portefeuille est vide. Cherche un actif et ajoute-le pour
+          commencer à le surveiller !
+        </p>
+        <a
+          href="index.html"
+          class="inline-block mt-4 bg-accent text-bg-deep font-semibold text-sm px-6 py-2 rounded-md hover:opacity-90"
+          >Rechercher un actif</a
+        >
+      </div>
+
+      <table id="watchlist-table" class="w-full hidden">
+        <thead>
+          <tr
+            class="text-text-3 text-xs uppercase tracking-wider border-b border-border"
+          >
+            <th class="text-left py-3">Ticker</th>
+            <th class="text-left py-3">Nom</th>
+            <th class="text-right py-3">Prix actuel</th>
+            <th class="text-right py-3">Variation</th>
+            <th class="text-right py-3">Ajouté le</th>
+            <th class="text-right py-3"></th>
+          </tr>
+        </thead>
+        <tbody id="watchlist-body"></tbody>
+      </table>
+    </main>
+
+    <script>
+      const API_URL = "http://127.0.0.1:5000/api";
+
+      async function apiFetch(url, options = {}) {
+        options.credentials = "include";
+        if (options.body) {
+          options.headers = {
+            "Content-Type": "application/json",
+            ...options.headers,
+          };
+        }
+        return fetch(url, options);
+      }
+
+      async function chargerWatchlist() {
+        try {
+          const response = await apiFetch(`${API_URL}/watchlist`);
+          const data = await response.json();
+
+          const count = data.count;
+          const watchlist = data.watchlist;
+
+          document.getElementById("watchlist-count").textContent =
+            `${count} actif${count > 1 ? "s" : ""}`;
+
+          if (count === 0) {
+            document
+              .getElementById("watchlist-empty")
+              .classList.remove("hidden");
+            document.getElementById("watchlist-table").classList.add("hidden");
+            return;
+          }
+
+          document.getElementById("watchlist-empty").classList.add("hidden");
+          document.getElementById("watchlist-table").classList.remove("hidden");
+
+          const tbody = document.getElementById("watchlist-body");
+          tbody.innerHTML = "";
+
+          watchlist.forEach((item) => {
+            const actif = item.actif;
+            const cotation = item.cotation;
+            const variation = cotation ? cotation.variation_pourcent : 0;
+            const isHausse = variation >= 0;
+            const couleur = isHausse ? "text-green-400" : "text-danger";
+            const symbole = isHausse ? "▲" : "▼";
+            const dateAjout = new Date(item.date_ajout).toLocaleDateString(
+              "fr-FR",
+            );
+
+            const tr = document.createElement("tr");
+            tr.className = "border-b border-border";
+            tr.innerHTML = `
+                        <td class="py-4">
+                            <span class="font-mono font-bold">${actif.ticker}</span>
+                            <span class="text-xs text-text-3 block">${actif.type}</span>
+                        </td>
+                        <td class="py-4 text-text-2">${actif.nom}</td>
+                        <td class="py-4 text-right font-mono">${cotation ? cotation.prix_actuel.toFixed(2) : "N/A"} ${actif.devise}</td>
+                        <td class="py-4 text-right ${couleur} font-mono">${symbole} ${variation >= 0 ? "+" : ""}${variation.toFixed(2)}%</td>
+                        <td class="py-4 text-right text-text-3 text-sm">${dateAjout}</td>
+                        <td class="py-4 text-right">
+                            <button onclick="retirerActif('${actif.ticker}')" class="text-xs text-text-3 border border-border px-3 py-1 rounded hover:text-danger hover:border-danger">
+                                Retirer
+                            </button>
+                        </td>
+                    `;
+            tbody.appendChild(tr);
+          });
+        } catch (error) {
+          console.error("Erreur:", error);
+        }
+      }
+
+      async function retirerActif(ticker) {
+        try {
+          const response = await apiFetch(`${API_URL}/watchlist/${ticker}`, {
+            method: "DELETE",
+          });
+          const data = await response.json();
+
+          if (data.success) {
+            chargerWatchlist();
+          } else {
+            alert(data.error);
+          }
+        } catch (error) {
+          alert("Erreur de connexion au serveur.");
+        }
+      }
+
+      chargerWatchlist();
+    </script>
+  </body>
+</html>

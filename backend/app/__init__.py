@@ -1,8 +1,8 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 from config.settings import Config
 
-# On crée SQLAlchemy ici, en dehors de la fonction
 db = SQLAlchemy()
 
 
@@ -17,6 +17,7 @@ def create_app():
 
     # 3. Connecter la base de données
     db.init_app(app)
+    CORS(app, supports_credentials=True)
 
     # 4. Enregistrer les routes
     from app.controllers import api
@@ -28,7 +29,6 @@ def create_app():
     app.register_blueprint(watchlist_bp, url_prefix="/api")
     app.register_blueprint(alerte_bp, url_prefix="/api")
 
-
     # 5. Créer les tables dans MySQL
     with app.app_context():
         from app.models.actif import Actif
@@ -38,4 +38,4 @@ def create_app():
         from app.models.historique import Historique
         db.create_all()
 
-    return app
+    return app 

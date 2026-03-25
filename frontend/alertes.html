@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BourSignal — Mes Alertes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/tailwind.config.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body class="bg-bg-deep font-sans text-text-1 min-h-screen">
+    <nav
+      class="bg-bg-deep border-b border-border px-12 flex items-center gap-8 sticky top-0 z-50"
+    >
+      <div class="font-mono text-accent font-bold text-lg py-4 mr-4">
+        BOUR<span class="text-text-1">SIGNAL</span>
+      </div>
+      <a
+        href="index.html"
+        class="text-text-2 text-sm font-medium py-5 border-b-2 border-transparent hover:text-text-1"
+        >Accueil</a
+      >
+      <a
+        href="watchlist.html"
+        class="text-text-2 text-sm font-medium py-5 border-b-2 border-transparent hover:text-text-1"
+        >Watchlist</a
+      >
+      <a
+        href="alertes.html"
+        class="text-text-1 text-sm font-medium py-5 border-b-2 border-accent"
+        >Alertes</a
+      >
+      <div class="ml-auto flex items-center gap-2">
+        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+        <span class="text-text-2 text-sm">LIVE</span>
+      </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-8 py-12">
+      <div
+        class="bg-bg-card border border-border rounded-lg p-6 mb-10 max-w-xl"
+      >
+        <h2 class="text-lg font-semibold mb-4">Créer une alerte</h2>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label
+              class="text-text-3 text-xs uppercase tracking-wider block mb-1"
+              >Ticker</label
+            >
+            <input
+              type="text"
+              id="alerte-ticker"
+              placeholder="AAPL"
+              class="w-full bg-bg-surface border border-border rounded px-3 py-2 text-sm text-text-1 outline-none focus:border-accent"
+            />
+          </div>
+          <div>
+            <label
+              class="text-text-3 text-xs uppercase tracking-wider block mb-1"
+              >Condition</label
+            >
+            <select
+              id="alerte-condition"
+              class="w-full bg-bg-surface border border-border rounded px-3 py-2 text-sm text-text-1 outline-none focus:border-accent"
+            >
+              <option value="Supérieur à">Supérieur à</option>
+              <option value="Inférieur à">Inférieur à</option>
+            </select>
+          </div>
+          <div>
+            <label
+              class="text-text-3 text-xs uppercase tracking-wider block mb-1"
+              >Prix cible</label
+            >
+            <input
+              type="number"
+              id="alerte-prix"
+              placeholder="200.00"
+              step="0.01"
+              class="w-full bg-bg-surface border border-border rounded px-3 py-2 text-sm text-text-1 outline-none focus:border-accent"
+            />
+          </div>
+          <div>
+            <label
+              class="text-text-3 text-xs uppercase tracking-wider block mb-1"
+              >Email</label
+            >
+            <input
+              type="email"
+              id="alerte-email"
+              placeholder="ton@email.com"
+              class="w-full bg-bg-surface border border-border rounded px-3 py-2 text-sm text-text-1 outline-none focus:border-accent"
+            />
+          </div>
+        </div>
+        <p id="alerte-error" class="text-danger text-xs mt-3 hidden"></p>
+        <p id="alerte-success" class="text-green-400 text-xs mt-3 hidden"></p>
+        <button
+          id="alerte-btn"
+          onclick="creerAlerte()"
+          class="mt-4 bg-warn text-bg-deep font-semibold text-sm px-6 py-2 rounded hover:opacity-90"
+        >
+          Créer l'alerte
+        </button>
+      </div>
+
+      <h2 class="text-lg font-semibold mb-4">Mes alertes</h2>
+
+      <div id="alertes-empty" class="text-center py-12 hidden">
+        <p class="text-text-2">Aucune alerte pour le moment.</p>
+      </div>
+
+      <div id="alertes-list" class="space-y-3"></div>
+    </main>
+
+    <script>
+      const API_URL = "http://127.0.0.1:5000/api";
+
+      async function apiFetch(url, options = {}) {
+        options.credentials = "include";
+        if (options.body) {
+          options.headers = {
+            "Content-Type": "application/json",
+            ...options.headers,
+          };
+        }
+        return fetch(url, options);
+      }
+
+      async function creerAlerte() {
+        const ticker = document.getElementById("alerte-ticker").value.trim();
+        const condition = document.getElementById("alerte-condition").value;
+        const prix = document.getElementById("alerte-prix").value;
+        const email = document.getElementById("alerte-email").value.trim();
+
+        cacherMessages();
+
+        if (!ticker || !prix || !email) {
+          afficherErreur("Tous les champs sont requis.");
+          return;
+        }
+
+        try {
+          const response = await apiFetch(`${API_URL}/alertes`, {
+            method: "POST",
+            body: JSON.stringify({
+              ticker: ticker,
+              condition: condition,
+              prix_cible: parseFloat(prix),
+              email: email,
+            }),
+          });
+          const data = await response.json();
+
+          if (data.error) {
+            afficherErreur(data.error);
+          } else {
+            afficherSucces(data.success);
+            document.getElementById("alerte-ticker").value = "";
+            document.getElementById("alerte-prix").value = "";
+            document.getElementById("alerte-email").value = "";
+            chargerAlertes();
+          }
+        } catch (error) {
+          afficherErreur("Erreur de connexion au serveur.");
+        }
+      }
+
+      async function chargerAlertes() {
+        try {
+          const response = await apiFetch(`${API_URL}/alertes`);
+          const data = await response.json();
+          const alertes = data.alertes;
+
+          const list = document.getElementById("alertes-list");
+          const empty = document.getElementById("alertes-empty");
+
+          if (alertes.length === 0) {
+            empty.classList.remove("hidden");
+            list.innerHTML = "";
+            return;
+          }
+
+          empty.classList.add("hidden");
+          list.innerHTML = "";
+
+          alertes.forEach((alerte) => {
+            const isActive = alerte.status === "ACTIVE";
+            const statusColor = isActive ? "text-green-400" : "text-text-3";
+            const statusBg = isActive ? "bg-green-400/10" : "bg-bg-surface";
+
+            const div = document.createElement("div");
+            div.className =
+              "bg-bg-card border border-border rounded-lg p-4 flex items-center justify-between";
+            div.innerHTML = `
+                        <div class="flex items-center gap-6">
+                            <span class="font-mono font-bold text-text-1">${alerte.ticker}</span>
+                            <span class="text-text-2 text-sm">${alerte.condition} <span class="font-mono text-accent">${alerte.prix_cible}$</span></span>
+                            <span class="text-text-3 text-xs">${alerte.email}</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="${statusColor} ${statusBg} text-xs px-2 py-1 rounded">${alerte.status}</span>
+                            ${isActive ? `<button onclick="supprimerAlerte(${alerte.id})" class="text-xs text-text-3 border border-border px-3 py-1 rounded hover:text-danger hover:border-danger">Supprimer</button>` : ""}
+                        </div>
+                    `;
+            list.appendChild(div);
+          });
+        } catch (error) {
+          console.error("Erreur:", error);
+        }
+      }
+
+      async function supprimerAlerte(id) {
+        try {
+          const response = await apiFetch(`${API_URL}/alertes/${id}`, {
+            method: "DELETE",
+          });
+          const data = await response.json();
+
+          if (data.success) {
+            chargerAlertes();
+          } else {
+            alert(data.error);
+          }
+        } catch (error) {
+          alert("Erreur de connexion au serveur.");
+        }
+      }
+
+      function afficherErreur(msg) {
+        document.getElementById("alerte-error").textContent = msg;
+        document.getElementById("alerte-error").classList.remove("hidden");
+      }
+
+      function afficherSucces(msg) {
+        document.getElementById("alerte-success").textContent = msg;
+        document.getElementById("alerte-success").classList.remove("hidden");
+      }
+
+      function cacherMessages() {
+        document.getElementById("alerte-error").classList.add("hidden");
+        document.getElementById("alerte-success").classList.add("hidden");
+      }
+
+      chargerAlertes();
+    </script>
+  </body>
+</html>

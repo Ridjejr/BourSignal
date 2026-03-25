@@ -81,3 +81,39 @@ class FinnhubService:
         except requests.RequestException as e:
             current_app.logger.error(f"Erreur Finnhub cotation {ticker}: {e}")
             return None
+        
+    
+    @staticmethod
+    def rechercher_symbole(query):
+        """
+        Recherche un actif par nom ou ticker.
+        Endpoint Finnhub : /search?q=apple
+        Retourne une liste de résultats [{ticker, nom}, ...]
+        """
+        api_key = current_app.config.get("FINNHUB_API_KEY")
+        base_url = current_app.config.get("FINNHUB_BASE_URL")
+
+        try:
+            response = requests.get(
+                f"{base_url}/search",
+                params={"q": query, "token": api_key},
+                timeout=10,
+            )
+            response.raise_for_status()
+            data = response.json()
+
+            if not data or "result" not in data:
+                return []
+
+            resultats = []
+            for item in data["result"][:10]:
+                resultats.append({
+                    "ticker": item.get("symbol", ""),
+                    "nom": item.get("description", ""),
+                    "type": item.get("type", ""),
+                })
+            return resultats
+
+        except requests.RequestException as e:
+            current_app.logger.error(f"Erreur Finnhub search {query}: {e}")
+            return []

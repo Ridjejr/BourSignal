@@ -1,0 +1,16 @@
+:root {
+  --bg-deep: #080c14;
+  --bg-dark: #0d1220;
+  --bg-card: #131929;
+  --bg-surface: #1a2236;
+  --border: #1e2d45;
+  --accent: #a78bfa;
+  --accent2: #6366f1;
+  --warn: #f59e0b;
+  --danger: #ef4444;
+  --text-1: #f0f4ff;
+  --text-2: #8a9bbb;
+  --text-3: #4a5878;
+  --mono: "Space Mono", monospace;
+  --sans: "DM Sans", sans-serif;
+}

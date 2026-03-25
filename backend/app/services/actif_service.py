@@ -1,3 +1,4 @@
+import re
 from datetime import datetime, timezone
 from app import db
 from app.models.actif import Actif
@@ -9,23 +10,41 @@ class ActifService:
     """Logique métier de recherche et consultation des actifs."""
 
     @staticmethod
-    def rechercher(ticker):
-        """
-        Recherche un actif par ticker.
-        Si pas en base → appelle Finnhub → stocke en base.
-        Gère les actions ET les ETF.
-        """
+    def rechercher(query):
+        query = query.strip()
+
+        # 1. Essayer comme ticker d'abord
+        if re.match(r"^[A-Za-z]{1,6}$", query):
+            resultat = ActifService._rechercher_par_ticker(query.upper())
+            if resultat:
+                return resultat
+
+        # 2. Si pas trouvé comme ticker, essayer comme nom
+        return ActifService._rechercher_par_nom(query)
+
+    @staticmethod
+    def _rechercher_par_nom(nom):
+        resultats = FinnhubService.rechercher_symbole(nom)
+        if not resultats:
+            return None
+
+        for resultat in resultats:
+            ticker = resultat["ticker"]
+            if "." not in ticker:
+                return ActifService._rechercher_par_ticker(ticker)
+
+        return ActifService._rechercher_par_ticker(resultats[0]["ticker"])
+
+    @staticmethod
+    def _rechercher_par_ticker(ticker):
         ticker = ticker.upper().strip()
 
-        # 1. Chercher en base
         actif = Actif.query.get(ticker)
 
         if not actif:
-            # 2. Pas en base → demander le profil à Finnhub
             profil = FinnhubService.get_profil(ticker)
 
             if profil:
-                # C'est une action classique
                 actif = Actif(
                     ticker=profil["ticker"],
                     nom=profil["nom"],
@@ -36,10 +55,9 @@ class ActifService:
                     exchange=profil["exchange"],
                 )
             else:
-                # Pas de profil → vérifier si la cotation existe (ETF)
                 cotation_data = FinnhubService.get_cotation(ticker)
                 if not cotation_data:
-                    return None  # Ni profil ni cotation → n'existe pas
+                    return None
 
                 actif = Actif(
                     ticker=ticker,
@@ -50,7 +68,6 @@ class ActifService:
 
             db.session.add(actif)
 
-        # 3. Mettre à jour la cotation
         cotation_data = FinnhubService.get_cotation(ticker)
         if cotation_data:
             if actif.cotation:
