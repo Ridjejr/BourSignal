@@ -1,5 +1,6 @@
 import re
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+
 from app import db
 from app.models.actif import Actif
 from app.models.cotation import Cotation
@@ -73,7 +74,7 @@ class ActifService:
             if actif.cotation:
                 for key, value in cotation_data.items():
                     setattr(actif.cotation, key, value)
-                actif.cotation.date_mise_a_jour = datetime.now(timezone.utc)
+                actif.cotation.date_mise_a_jour = datetime.now(UTC)
             else:
                 cotation = Cotation(ticker=ticker, **cotation_data)
                 db.session.add(cotation)

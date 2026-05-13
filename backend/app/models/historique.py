@@ -1,4 +1,5 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+
 from app import db
 
 
@@ -15,7 +16,7 @@ class Historique(db.Model):
     )
     prix_declenchement = db.Column(db.Numeric(12, 2), nullable=False)
     date_envoi = db.Column(
-        db.DateTime, default=lambda: datetime.now(timezone.utc)
+        db.DateTime, default=lambda: datetime.now(UTC)
     )
     status_envoi = db.Column(db.String(20), default="ENVOYE")
 

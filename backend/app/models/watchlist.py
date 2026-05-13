@@ -1,4 +1,5 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+
 from app import db
 
 
@@ -15,7 +16,7 @@ class Watchlist(db.Model):
         nullable=False,
     )
     date_ajout = db.Column(
-        db.DateTime, default=lambda: datetime.now(timezone.utc)
+        db.DateTime, default=lambda: datetime.now(UTC)
     )
 
     # Un même actif ne peut pas apparaître 2 fois dans la même watchlist

@@ -1,4 +1,5 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, jsonify, request
+
 from app.services.actif_service import ActifService
 
 actif_bp = Blueprint("actifs", __name__)

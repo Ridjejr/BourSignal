@@ -1,4 +1,5 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+
 from app import db
 
 
@@ -19,7 +20,7 @@ class Alerte(db.Model):
     email = db.Column(db.String(255), nullable=False)
     status = db.Column(db.String(20), default="ACTIVE", index=True)
     date_creation = db.Column(
-        db.DateTime, default=lambda: datetime.now(timezone.utc)
+        db.DateTime, default=lambda: datetime.now(UTC)
     )
     date_declenchement = db.Column(db.DateTime, nullable=True)
 
