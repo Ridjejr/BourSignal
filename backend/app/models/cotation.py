@@ -1,4 +1,5 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+
 from app import db
 
 
@@ -23,7 +24,7 @@ class Cotation(db.Model):
     variation_pourcent = db.Column(db.Numeric(8, 2), default=0)
     volume = db.Column(db.BigInteger, default=0)
     date_mise_a_jour = db.Column(
-        db.DateTime, default=lambda: datetime.now(timezone.utc)
+        db.DateTime, default=lambda: datetime.now(UTC)
     )
 
     def to_dict(self):

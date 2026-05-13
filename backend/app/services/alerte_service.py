@@ -1,8 +1,7 @@
 import re
+
 from app import db
 from app.models.alerte import Alerte
-from app.models.historique import Historique
-from app.services.finnhub_service import FinnhubService
 
 
 class AlerteService:

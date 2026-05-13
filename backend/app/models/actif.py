@@ -1,4 +1,5 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+
 from app import db
 
 
@@ -15,7 +16,7 @@ class Actif(db.Model):
     secteur = db.Column(db.String(100), default="")
     exchange = db.Column(db.String(50), default="")
     date_creation = db.Column(
-        db.DateTime, default=lambda: datetime.now(timezone.utc)
+        db.DateTime, default=lambda: datetime.now(UTC)
     )
 
     # Relations

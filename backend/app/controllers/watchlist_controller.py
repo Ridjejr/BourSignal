@@ -1,4 +1,5 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, jsonify, request
+
 from app.services.watchlist_service import WatchlistService
 from app.utils.session_helper import get_session_id
 

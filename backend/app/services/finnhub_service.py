@@ -81,8 +81,8 @@ class FinnhubService:
         except requests.RequestException as e:
             current_app.logger.error(f"Erreur Finnhub cotation {ticker}: {e}")
             return None
-        
-    
+
+
     @staticmethod
     def rechercher_symbole(query):
         """

@@ -1,6 +1,6 @@
 from app import db
-from app.models.watchlist import Watchlist
 from app.models.actif import Actif
+from app.models.watchlist import Watchlist
 from app.services.actif_service import ActifService
 
 MAX_WATCHLIST_SIZE = 10
