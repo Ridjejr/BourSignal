@@ -8,6 +8,12 @@ class Alerte(db.Model):
 
     __tablename__ = "alertes"
 
+    # États possibles d'une alerte (machine à états).
+    # CANCELLED est terminal : aucune transition n'en sort.
+    STATUS_ACTIVE = "ACTIVE"
+    STATUS_SUSPENDED = "SUSPENDED"
+    STATUS_CANCELLED = "CANCELLED"
+
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     session_id = db.Column(db.String(255), nullable=False, index=True)
     ticker = db.Column(
@@ -18,7 +24,10 @@ class Alerte(db.Model):
     condition = db.Column(db.String(20), nullable=False)
     prix_cible = db.Column(db.Numeric(12, 2), nullable=False)
     email = db.Column(db.String(255), nullable=False)
-    status = db.Column(db.String(20), default="ACTIVE", index=True)
+    status = db.Column(db.String(20), default=STATUS_ACTIVE, index=True)
+    # Hash du code de gestion : preuve d'appartenance rattachée à l'alerte.
+    # Le code en clair n'est montré qu'une fois, à la création.
+    code_hash = db.Column(db.String(255), nullable=False)
     date_creation = db.Column(
         db.DateTime, default=lambda: datetime.now(UTC)
     )

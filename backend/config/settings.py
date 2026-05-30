@@ -30,6 +30,17 @@ class Config:
     FINNHUB_API_KEY = os.getenv("FINNHUB_API_KEY", "")
     FINNHUB_BASE_URL = "https://finnhub.io/api/v1"
 
+    # Envoi d'emails (SMTP). Si SMTP_USER/SMTP_PASSWORD sont vides,
+    # le service bascule en "mode dev" : il logue le mail au lieu de l'envoyer.
+    SMTP_HOST = os.getenv("SMTP_HOST", "smtp.gmail.com")
+    SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
+    SMTP_USER = os.getenv("SMTP_USER", "")
+    SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
+    EMAIL_FROM = os.getenv("EMAIL_FROM", "") or SMTP_USER
+
+    # URL du front, pour construire le lien de gestion envoyé par email.
+    FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
+
 
 class TestConfig(Config):
     """Configuration utilisée par la suite pytest."""

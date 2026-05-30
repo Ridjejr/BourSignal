@@ -99,6 +99,33 @@
         </div>
         <p id="alerte-error" class="text-danger text-xs mt-3 hidden"></p>
         <p id="alerte-success" class="text-green-400 text-xs mt-3 hidden"></p>
+
+        <!-- Code de gestion : affiché UNE SEULE FOIS après création -->
+        <div
+          id="code-gestion-box"
+          class="hidden mt-4 bg-bg-surface border border-warn rounded p-4"
+        >
+          <p class="text-warn text-xs uppercase tracking-wider mb-2">
+            ⚠ Code de gestion — note-le, il ne sera plus affiché
+          </p>
+          <p class="text-text-3 text-xs mb-3">
+            Ce code est la preuve d'appartenance de ton alerte. Il sera demandé
+            pour la suspendre, la réactiver ou l'annuler.
+          </p>
+          <div class="flex items-center gap-3">
+            <code
+              id="code-gestion-value"
+              class="font-mono text-text-1 text-lg select-all"
+            ></code>
+            <button
+              onclick="copierCode()"
+              class="text-xs text-text-3 border border-border px-3 py-1 rounded hover:text-accent hover:border-accent"
+            >
+              Copier
+            </button>
+          </div>
+        </div>
+
         <button
           id="alerte-btn"
           onclick="creerAlerte()"
@@ -160,6 +187,7 @@
             afficherErreur(data.error);
           } else {
             afficherSucces(data.success);
+            afficherCode(data.code_gestion);
             document.getElementById("alerte-ticker").value = "";
             document.getElementById("alerte-prix").value = "";
             document.getElementById("alerte-email").value = "";
@@ -189,9 +217,7 @@
           list.innerHTML = "";
 
           alertes.forEach((alerte) => {
-            const isActive = alerte.status === "ACTIVE";
-            const statusColor = isActive ? "text-green-400" : "text-text-3";
-            const statusBg = isActive ? "bg-green-400/10" : "bg-bg-surface";
+            const ui = STATUS_UI[alerte.status] || STATUS_UI.CANCELLED;
 
             const div = document.createElement("div");
             div.className =
@@ -203,8 +229,8 @@
                             <span class="text-text-3 text-xs">${alerte.email}</span>
                         </div>
                         <div class="flex items-center gap-4">
-                            <span class="${statusColor} ${statusBg} text-xs px-2 py-1 rounded">${alerte.status}</span>
-                            ${isActive ? `<button onclick="supprimerAlerte(${alerte.id})" class="text-xs text-text-3 border border-border px-3 py-1 rounded hover:text-danger hover:border-danger">Supprimer</button>` : ""}
+                            <span class="${ui.color} ${ui.bg} text-xs px-2 py-1 rounded">${ui.label}</span>
+                            <div class="flex items-center gap-2">${boutonsActions(alerte)}</div>
                         </div>
                     `;
             list.appendChild(div);
@@ -214,10 +240,42 @@
         }
       }
 
-      async function supprimerAlerte(id) {
+      // Présentation visuelle de chaque état.
+      const STATUS_UI = {
+        ACTIVE: { label: "ACTIVE", color: "text-green-400", bg: "bg-green-400/10" },
+        SUSPENDED: { label: "SUSPENDUE", color: "text-warn", bg: "bg-warn/10" },
+        CANCELLED: { label: "ANNULÉE", color: "text-text-3", bg: "bg-bg-surface" },
+      };
+
+      // Boutons proposés selon l'état courant (la machine à états côté front).
+      function boutonsActions(alerte) {
+        const btn = (action, label, hover) =>
+          `<button onclick="changerEtat(${alerte.id}, '${action}')" class="text-xs text-text-3 border border-border px-3 py-1 rounded hover:${hover}">${label}</button>`;
+
+        if (alerte.status === "ACTIVE") {
+          return (
+            btn("suspendre", "Suspendre", "text-warn hover:border-warn") +
+            btn("annuler", "Annuler", "text-danger hover:border-danger")
+          );
+        }
+        if (alerte.status === "SUSPENDED") {
+          return (
+            btn("reactiver", "Réactiver", "text-green-400 hover:border-green-400") +
+            btn("annuler", "Annuler", "text-danger hover:border-danger")
+          );
+        }
+        // CANCELLED : état terminal, aucune action.
+        return "";
+      }
+
+      async function changerEtat(id, action) {
+        const code = prompt("Entre le code de gestion de cette alerte :");
+        if (!code) return;
+
         try {
           const response = await apiFetch(`${API_URL}/alertes/${id}`, {
-            method: "DELETE",
+            method: "PATCH",
+            body: JSON.stringify({ action: action, code: code.trim() }),
           });
           const data = await response.json();
 
@@ -229,6 +287,17 @@
         } catch (error) {
           alert("Erreur de connexion au serveur.");
         }
+      }
+
+      function afficherCode(code) {
+        if (!code) return;
+        document.getElementById("code-gestion-value").textContent = code;
+        document.getElementById("code-gestion-box").classList.remove("hidden");
+      }
+
+      function copierCode() {
+        const code = document.getElementById("code-gestion-value").textContent;
+        navigator.clipboard.writeText(code);
       }
 
       function afficherErreur(msg) {
