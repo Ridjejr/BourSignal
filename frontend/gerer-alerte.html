@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BourSignal — Gérer mon alerte</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/tailwind.config.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body class="bg-bg-deep font-sans text-text-1 min-h-screen">
+    <nav
+      class="bg-bg-deep border-b border-border px-12 flex items-center gap-8 sticky top-0 z-50"
+    >
+      <div class="font-mono text-accent font-bold text-lg py-4 mr-4">
+        BOUR<span class="text-text-1">SIGNAL</span>
+      </div>
+      <a
+        href="index.html"
+        class="text-text-2 text-sm font-medium py-5 border-b-2 border-transparent hover:text-text-1"
+        >Accueil</a
+      >
+      <a
+        href="alertes.html"
+        class="text-text-2 text-sm font-medium py-5 border-b-2 border-transparent hover:text-text-1"
+        >Alertes</a
+      >
+    </nav>
+
+    <main class="max-w-xl mx-auto px-8 py-12">
+      <h1 class="text-2xl font-semibold mb-2">Gérer mon alerte</h1>
+      <p class="text-text-3 text-sm mb-8">
+        Cette page utilise ton code de gestion — elle fonctionne depuis
+        n'importe quel appareil, sans connexion.
+      </p>
+
+      <!-- Saisie manuelle du code si absent de l'URL -->
+      <div
+        id="code-form"
+        class="bg-bg-card border border-border rounded-lg p-6 mb-6 hidden"
+      >
+        <label class="text-text-3 text-xs uppercase tracking-wider block mb-1"
+          >Code de gestion</label
+        >
+        <div class="flex gap-3">
+          <input
+            type="text"
+            id="code-input"
+            placeholder="Colle ton code ici"
+            class="flex-1 bg-bg-surface border border-border rounded px-3 py-2 text-sm text-text-1 outline-none focus:border-accent font-mono"
+          />
+          <button
+            onclick="chargerAvecCodeSaisi()"
+            class="bg-accent text-bg-deep font-semibold text-sm px-5 py-2 rounded hover:opacity-90"
+          >
+            Accéder
+          </button>
+        </div>
+      </div>
+
+      <p id="message" class="text-danger text-sm mb-4 hidden"></p>
+
+      <!-- Carte de l'alerte (remplie en JS) -->
+      <div id="alerte-card" class="bg-bg-card border border-border rounded-lg p-6 hidden"></div>
+    </main>
+
+    <script>
+      const API_URL = "/api";
+
+      // Lecture des paramètres du lien (?id=..&code=..)
+      const params = new URLSearchParams(window.location.search);
+      const alerteId = params.get("id");
+      let code = params.get("code");
+
+      const STATUS_UI = {
+        ACTIVE: { label: "ACTIVE", color: "text-green-400", bg: "bg-green-400/10" },
+        SUSPENDED: { label: "SUSPENDUE", color: "text-warn", bg: "bg-warn/10" },
+        CANCELLED: { label: "ANNULÉE", color: "text-text-3", bg: "bg-bg-surface" },
+      };
+
+      function afficherMessage(msg, erreur = true) {
+        const el = document.getElementById("message");
+        el.textContent = msg;
+        el.className = `${erreur ? "text-danger" : "text-green-400"} text-sm mb-4`;
+      }
+
+      function boutonsActions(alerte) {
+        const btn = (action, label, hover) =>
+          `<button onclick="changerEtat('${action}')" class="text-sm text-text-2 border border-border px-4 py-2 rounded hover:${hover}">${label}</button>`;
+
+        if (alerte.status === "ACTIVE") {
+          return (
+            btn("suspendre", "Suspendre", "text-warn hover:border-warn") +
+            btn("annuler", "Annuler", "text-danger hover:border-danger")
+          );
+        }
+        if (alerte.status === "SUSPENDED") {
+          return (
+            btn("reactiver", "Réactiver", "text-green-400 hover:border-green-400") +
+            btn("annuler", "Annuler", "text-danger hover:border-danger")
+          );
+        }
+        return `<span class="text-text-3 text-sm">Alerte annulée — aucune action possible.</span>`;
+      }
+
+      function afficherAlerte(alerte) {
+        const ui = STATUS_UI[alerte.status] || STATUS_UI.CANCELLED;
+        const card = document.getElementById("alerte-card");
+        card.innerHTML = `
+          <div class="flex items-center justify-between mb-5">
+            <span class="font-mono font-bold text-xl text-text-1">${alerte.ticker}</span>
+            <span class="${ui.color} ${ui.bg} text-xs px-3 py-1 rounded">${ui.label}</span>
+          </div>
+          <p class="text-text-2 text-sm mb-1">${alerte.condition}
+            <span class="font-mono text-accent">${alerte.prix_cible}$</span></p>
+          <p class="text-text-3 text-xs mb-6">${alerte.email}</p>
+          <div class="flex gap-3">${boutonsActions(alerte)}</div>
+        `;
+        card.classList.remove("hidden");
+      }
+
+      async function chargerAlerte() {
+        try {
+          const response = await fetch(`${API_URL}/alertes/${alerteId}/acces`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code: code }),
+          });
+          const data = await response.json();
+
+          if (data.error) {
+            afficherMessage(data.error);
+            document.getElementById("alerte-card").classList.add("hidden");
+            document.getElementById("code-form").classList.remove("hidden");
+            return;
+          }
+
+          document.getElementById("message").classList.add("hidden");
+          document.getElementById("code-form").classList.add("hidden");
+          afficherAlerte(data.alerte);
+        } catch (error) {
+          afficherMessage("Erreur de connexion au serveur.");
+        }
+      }
+
+      function chargerAvecCodeSaisi() {
+        code = document.getElementById("code-input").value.trim();
+        if (!code) return;
+        chargerAlerte();
+      }
+
+      async function changerEtat(action) {
+        try {
+          const response = await fetch(`${API_URL}/alertes/${alerteId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: action, code: code }),
+          });
+          const data = await response.json();
+
+          if (data.error) {
+            afficherMessage(data.error);
+          } else {
+            afficherMessage("Alerte mise à jour ✓", false);
+            afficherAlerte(data.alerte);
+          }
+        } catch (error) {
+          afficherMessage("Erreur de connexion au serveur.");
+        }
+      }
+
+      // Au chargement : si l'id et le code sont dans l'URL, on charge direct.
+      // Sinon on demande le code à l'utilisateur.
+      if (!alerteId) {
+        afficherMessage("Lien invalide : identifiant d'alerte manquant.");
+      } else if (code) {
+        chargerAlerte();
+      } else {
+        document.getElementById("code-form").classList.remove("hidden");
+      }
+    </script>
+  </body>
+</html>
