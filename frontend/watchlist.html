@@ -7,78 +7,108 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="js/tailwind.config.js"></script>
     <link
-      href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/style.css" />
   </head>
-  <body class="bg-bg-deep font-sans text-text-1 min-h-screen">
+  <body class="bg-bg-deep font-sans text-text-1 min-h-screen antialiased">
     <nav
-      class="bg-bg-deep border-b border-border px-12 flex items-center gap-8 sticky top-0 z-50"
+      class="bg-bg-deep/80 backdrop-blur-xl border-b border-border/80 px-6 md:px-12 py-3 flex items-center gap-3 sticky top-0 z-50"
     >
-      <div class="font-mono text-accent font-bold text-lg py-4 mr-4">
-        BOUR<span class="text-text-1">SIGNAL</span>
+      <a href="index.html" class="flex items-center gap-2.5 mr-1 shrink-0">
+        <svg width="27" height="22" viewBox="0 0 27 22" fill="none" class="overflow-visible">
+          <polyline points="1,18 7.5,18 7.5,12 14,12 14,7 20.5,7 20.5,2.5 26,2.5" stroke="#A78BFA" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+          <circle cx="26" cy="2.5" r="2.6" fill="#A78BFA"></circle>
+        </svg>
+        <span class="font-mono font-bold text-lg tracking-tight"><span class="text-text-1">BOUR</span><span class="text-accent">SIGNAL</span></span>
+      </a>
+      <div class="hidden sm:flex items-center gap-1.5 ml-2">
+        <a href="index.html" class="nav-pill">Accueil</a>
+        <a href="watchlist.html" class="nav-pill is-active">Watchlist</a>
+        <a href="alertes.html" class="nav-pill">Alertes</a>
       </div>
-      <a
-        href="index.html"
-        class="text-text-2 text-sm font-medium py-5 border-b-2 border-transparent hover:text-text-1"
-        >Accueil</a
+      <div
+        id="nav-ticker"
+        class="nav-ticker ml-auto hidden lg:flex items-stretch bg-bg-card border border-border rounded-xl overflow-hidden"
       >
-      <a
-        href="watchlist.html"
-        class="text-text-1 text-sm font-medium py-5 border-b-2 border-accent"
-        >Watchlist</a
-      >
-      <a
-        href="alertes.html"
-        class="text-text-2 text-sm font-medium py-5 border-b-2 border-transparent hover:text-text-1"
-        >Alertes</a
-      >
-      <div class="ml-auto flex items-center gap-2">
-        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-        <span class="text-text-2 text-sm">LIVE</span>
+        <div class="ticker-item" data-ticker="AAPL">
+          <span class="ticker-symbol">AAPL</span>
+          <span class="ticker-price">213.55</span>
+          <span class="ticker-change up">▲ +1.24%</span>
+        </div>
+        <div class="ticker-item" data-ticker="TSLA">
+          <span class="ticker-symbol">TSLA</span>
+          <span class="ticker-price">248.90</span>
+          <span class="ticker-change up">▲ +3.41%</span>
+        </div>
+        <div class="ticker-item" data-ticker="SPY">
+          <span class="ticker-symbol">SPY</span>
+          <span class="ticker-price">533.27</span>
+          <span class="ticker-change up">▲ +0.18%</span>
+        </div>
       </div>
     </nav>
 
-    <main class="max-w-6xl mx-auto px-8 py-12">
-      <div class="flex justify-between items-center mb-8">
+    <main class="max-w-6xl mx-auto px-6 md:px-8 py-12">
+      <div class="flex justify-between items-end mb-8">
         <div>
-          <h1 class="text-2xl font-semibold">Ma Watchlist</h1>
-          <p class="text-text-2 text-sm">Actifs en cours de surveillance</p>
+          <p
+            class="font-mono text-accent text-[11px] tracking-[0.22em] uppercase mb-2.5"
+          >
+            Portefeuille suivi
+          </p>
+          <h1 class="text-3xl md:text-4xl font-semibold tracking-tight">
+            Ma Watchlist
+          </h1>
+          <p class="text-text-2 text-sm mt-2">Actifs en cours de surveillance</p>
         </div>
         <span
           id="watchlist-count"
-          class="bg-bg-surface text-accent font-mono text-sm px-3 py-1 rounded-full border border-border"
+          class="bg-bg-card text-accent font-mono text-sm px-3.5 py-1.5 rounded-full border border-border"
         ></span>
       </div>
 
-      <div id="watchlist-empty" class="text-center py-16 hidden">
-        <p class="text-text-2">
-          Ton portefeuille est vide. Cherche un actif et ajoute-le pour
-          commencer à le surveiller !
+      <div
+        id="watchlist-empty"
+        class="hidden rounded-2xl border border-dashed border-border bg-bg-card/40 text-center py-20 px-6"
+      >
+        <div
+          class="w-14 h-14 mx-auto mb-5 rounded-2xl bg-bg-surface border border-border flex items-center justify-center"
+        >
+          <span class="w-3 h-3 rounded-full bg-text-3"></span>
+        </div>
+        <p class="text-text-1 font-medium">Ton portefeuille est vide</p>
+        <p class="text-text-2 text-sm mt-1 max-w-sm mx-auto">
+          Cherche un actif et ajoute-le pour commencer à le surveiller !
         </p>
         <a
           href="index.html"
-          class="inline-block mt-4 bg-accent text-bg-deep font-semibold text-sm px-6 py-2 rounded-md hover:opacity-90"
+          class="inline-block mt-6 bg-accent-grad text-bg-deep font-semibold text-sm px-6 py-2.5 rounded-xl transition duration-200 hover:brightness-110 hover:shadow-glow-accent active:scale-[0.98]"
           >Rechercher un actif</a
         >
       </div>
 
-      <table id="watchlist-table" class="w-full hidden">
-        <thead>
-          <tr
-            class="text-text-3 text-xs uppercase tracking-wider border-b border-border"
-          >
-            <th class="text-left py-3">Ticker</th>
-            <th class="text-left py-3">Nom</th>
-            <th class="text-right py-3">Prix actuel</th>
-            <th class="text-right py-3">Variation</th>
-            <th class="text-right py-3">Ajouté le</th>
-            <th class="text-right py-3"></th>
-          </tr>
-        </thead>
-        <tbody id="watchlist-body"></tbody>
-      </table>
+      <div
+        id="watchlist-table"
+        class="hidden bg-bg-card/60 border border-border rounded-2xl shadow-card overflow-hidden"
+      >
+        <table class="w-full">
+          <thead>
+            <tr
+              class="text-text-3 text-[11px] uppercase tracking-[0.12em] border-b border-border"
+            >
+              <th class="text-left font-medium py-3.5 px-5">Ticker</th>
+              <th class="text-left font-medium py-3.5 px-5">Nom</th>
+              <th class="text-right font-medium py-3.5 px-5">Prix actuel</th>
+              <th class="text-right font-medium py-3.5 px-5">Variation</th>
+              <th class="text-right font-medium py-3.5 px-5">Ajouté le</th>
+              <th class="text-right font-medium py-3.5 px-5"></th>
+            </tr>
+          </thead>
+          <tbody id="watchlist-body"></tbody>
+        </table>
+      </div>
     </main>
 
     <script>
@@ -99,60 +129,69 @@
         try {
           const response = await apiFetch(`${API_URL}/watchlist`);
           const data = await response.json();
+          renderWatchlist(data.count, data.watchlist);
+        } catch (error) {
+          console.error("Erreur:", error);
+          // Fallback PREVIEW uniquement (backend injoignable).
+          renderWatchlist(DEMO_WATCHLIST.length, DEMO_WATCHLIST);
+        }
+      }
 
-          const count = data.count;
-          const watchlist = data.watchlist;
+      function renderWatchlist(count, watchlist) {
+        document.getElementById("watchlist-count").textContent =
+          `${count} actif${count > 1 ? "s" : ""}`;
 
-          document.getElementById("watchlist-count").textContent =
-            `${count} actif${count > 1 ? "s" : ""}`;
+        if (count === 0) {
+          document.getElementById("watchlist-empty").classList.remove("hidden");
+          document.getElementById("watchlist-table").classList.add("hidden");
+          return;
+        }
 
-          if (count === 0) {
-            document
-              .getElementById("watchlist-empty")
-              .classList.remove("hidden");
-            document.getElementById("watchlist-table").classList.add("hidden");
-            return;
-          }
+        document.getElementById("watchlist-empty").classList.add("hidden");
+        document.getElementById("watchlist-table").classList.remove("hidden");
 
-          document.getElementById("watchlist-empty").classList.add("hidden");
-          document.getElementById("watchlist-table").classList.remove("hidden");
+        const tbody = document.getElementById("watchlist-body");
+        tbody.innerHTML = "";
 
-          const tbody = document.getElementById("watchlist-body");
-          tbody.innerHTML = "";
+        watchlist.forEach((item) => {
+          const actif = item.actif;
+          const cotation = item.cotation;
+          const variation = cotation ? cotation.variation_pourcent : 0;
+          const isHausse = variation >= 0;
+          const couleur = isHausse ? "text-green-400" : "text-danger";
+          const bgVar = isHausse
+            ? "bg-green-400/10 border-green-400/20"
+            : "bg-danger/10 border-danger/20";
+          const symbole = isHausse ? "▲" : "▼";
+          const dateAjout = new Date(item.date_ajout).toLocaleDateString("fr-FR");
 
-          watchlist.forEach((item) => {
-            const actif = item.actif;
-            const cotation = item.cotation;
-            const variation = cotation ? cotation.variation_pourcent : 0;
-            const isHausse = variation >= 0;
-            const couleur = isHausse ? "text-green-400" : "text-danger";
-            const symbole = isHausse ? "▲" : "▼";
-            const dateAjout = new Date(item.date_ajout).toLocaleDateString(
-              "fr-FR",
-            );
-
-            const tr = document.createElement("tr");
-            tr.className = "border-b border-border";
-            tr.innerHTML = `
-                        <td class="py-4">
-                            <span class="font-mono font-bold">${actif.ticker}</span>
-                            <span class="text-xs text-text-3 block">${actif.type}</span>
+          const tr = document.createElement("tr");
+          tr.className =
+            "group border-b border-border/60 last:border-0 transition-colors duration-150 hover:bg-bg-surface/40";
+          tr.innerHTML = `
+                        <td class="py-4 px-5">
+                            <div class="flex items-center gap-3">
+                                <div class="shrink-0 w-9 h-9 rounded-lg bg-bg-surface border border-border flex items-center justify-center font-mono font-bold text-[10px] text-text-1 transition group-hover:border-accent/40">${actif.ticker.slice(0, 4)}</div>
+                                <div>
+                                    <span class="font-mono font-bold text-text-1 block leading-tight">${actif.ticker}</span>
+                                    <span class="text-[11px] text-text-3">${actif.type}</span>
+                                </div>
+                            </div>
                         </td>
-                        <td class="py-4 text-text-2">${actif.nom}</td>
-                        <td class="py-4 text-right font-mono">${cotation ? cotation.prix_actuel.toFixed(2) : "N/A"} ${actif.devise}</td>
-                        <td class="py-4 text-right ${couleur} font-mono">${symbole} ${variation >= 0 ? "+" : ""}${variation.toFixed(2)}%</td>
-                        <td class="py-4 text-right text-text-3 text-sm">${dateAjout}</td>
-                        <td class="py-4 text-right">
-                            <button onclick="retirerActif('${actif.ticker}')" class="text-xs text-text-3 border border-border px-3 py-1 rounded hover:text-danger hover:border-danger">
+                        <td class="py-4 px-5 text-text-2 text-sm">${actif.nom}</td>
+                        <td class="py-4 px-5 text-right font-mono text-text-1">${cotation ? cotation.prix_actuel.toFixed(2) : "N/A"} <span class="text-text-3 text-xs">${actif.devise}</span></td>
+                        <td class="py-4 px-5 text-right">
+                            <span class="inline-block ${couleur} ${bgVar} border font-mono text-xs font-bold px-2 py-1 rounded-lg">${symbole} ${variation >= 0 ? "+" : ""}${variation.toFixed(2)}%</span>
+                        </td>
+                        <td class="py-4 px-5 text-right text-text-3 text-sm">${dateAjout}</td>
+                        <td class="py-4 px-5 text-right">
+                            <button onclick="retirerActif('${actif.ticker}')" class="text-xs font-medium text-text-2 border border-border px-3 py-1.5 rounded-lg transition duration-200 hover:text-danger hover:border-danger/60 hover:bg-danger/5">
                                 Retirer
                             </button>
                         </td>
                     `;
-            tbody.appendChild(tr);
-          });
-        } catch (error) {
-          console.error("Erreur:", error);
-        }
+          tbody.appendChild(tr);
+        });
       }
 
       async function retirerActif(ticker) {
@@ -172,7 +211,16 @@
         }
       }
 
+      // Données de démonstration (preview sans backend uniquement).
+      const DEMO_WATCHLIST = [
+        { actif: { ticker: "AAPL", nom: "Apple Inc.", type: "Action", devise: "USD" }, cotation: { prix_actuel: 213.55, variation_pourcent: 1.24 }, date_ajout: "2026-05-12" },
+        { actif: { ticker: "NVDA", nom: "NVIDIA Corp.", type: "Action", devise: "USD" }, cotation: { prix_actuel: 121.4, variation_pourcent: -2.13 }, date_ajout: "2026-05-18" },
+        { actif: { ticker: "SPY", nom: "SPDR S&P 500 ETF", type: "ETF", devise: "USD" }, cotation: { prix_actuel: 533.27, variation_pourcent: 0.18 }, date_ajout: "2026-05-24" },
+      ];
+
       chargerWatchlist();
     </script>
+      <script src="js/ticker.js"></script>
+    <script src="js/footer.js"></script>
   </body>
 </html>

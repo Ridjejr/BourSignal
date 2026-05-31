@@ -7,141 +7,194 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="js/tailwind.config.js"></script>
     <link
-      href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/style.css" />
   </head>
-  <body class="bg-bg-deep font-sans text-text-1 min-h-screen">
+  <body class="bg-bg-deep font-sans text-text-1 min-h-screen antialiased">
+    <!-- NAVBAR -->
     <nav
-      class="bg-bg-deep border-b border-border px-12 flex items-center gap-8 sticky top-0 z-50"
+      class="bg-bg-deep/80 backdrop-blur-xl border-b border-border/80 px-6 md:px-12 py-3 flex items-center gap-3 sticky top-0 z-50"
     >
-      <div class="font-mono text-accent font-bold text-lg py-4 mr-4">
-        BOUR<span class="text-text-1">SIGNAL</span>
+      <a href="index.html" class="flex items-center gap-2.5 mr-1 shrink-0">
+        <svg width="27" height="22" viewBox="0 0 27 22" fill="none" class="overflow-visible">
+          <polyline points="1,18 7.5,18 7.5,12 14,12 14,7 20.5,7 20.5,2.5 26,2.5" stroke="#A78BFA" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+          <circle cx="26" cy="2.5" r="2.6" fill="#A78BFA"></circle>
+        </svg>
+        <span class="font-mono font-bold text-lg tracking-tight"><span class="text-text-1">BOUR</span><span class="text-accent">SIGNAL</span></span>
+      </a>
+      <div class="hidden sm:flex items-center gap-1.5 ml-2">
+        <a href="index.html" class="nav-pill">Accueil</a>
+        <a href="watchlist.html" class="nav-pill">Watchlist</a>
+        <a href="alertes.html" class="nav-pill is-active">Alertes</a>
       </div>
-      <a
-        href="index.html"
-        class="text-text-2 text-sm font-medium py-5 border-b-2 border-transparent hover:text-text-1"
-        >Accueil</a
+      <div
+        id="nav-ticker"
+        class="nav-ticker ml-auto hidden lg:flex items-stretch bg-bg-card border border-border rounded-xl overflow-hidden"
       >
-      <a
-        href="watchlist.html"
-        class="text-text-2 text-sm font-medium py-5 border-b-2 border-transparent hover:text-text-1"
-        >Watchlist</a
-      >
-      <a
-        href="alertes.html"
-        class="text-text-1 text-sm font-medium py-5 border-b-2 border-accent"
-        >Alertes</a
-      >
-      <div class="ml-auto flex items-center gap-2">
-        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-        <span class="text-text-2 text-sm">LIVE</span>
+        <div class="ticker-item" data-ticker="AAPL">
+          <span class="ticker-symbol">AAPL</span>
+          <span class="ticker-price">213.55</span>
+          <span class="ticker-change up">▲ +1.24%</span>
+        </div>
+        <div class="ticker-item" data-ticker="TSLA">
+          <span class="ticker-symbol">TSLA</span>
+          <span class="ticker-price">248.90</span>
+          <span class="ticker-change up">▲ +3.41%</span>
+        </div>
+        <div class="ticker-item" data-ticker="SPY">
+          <span class="ticker-symbol">SPY</span>
+          <span class="ticker-price">533.27</span>
+          <span class="ticker-change up">▲ +0.18%</span>
+        </div>
       </div>
     </nav>
 
-    <main class="max-w-6xl mx-auto px-8 py-12">
-      <div
-        class="bg-bg-card border border-border rounded-lg p-6 mb-10 max-w-xl"
-      >
-        <h2 class="text-lg font-semibold mb-4">Créer une alerte</h2>
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label
-              class="text-text-3 text-xs uppercase tracking-wider block mb-1"
-              >Ticker</label
-            >
-            <input
-              type="text"
-              id="alerte-ticker"
-              placeholder="AAPL"
-              class="w-full bg-bg-surface border border-border rounded px-3 py-2 text-sm text-text-1 outline-none focus:border-accent"
-            />
-          </div>
-          <div>
-            <label
-              class="text-text-3 text-xs uppercase tracking-wider block mb-1"
-              >Condition</label
-            >
-            <select
-              id="alerte-condition"
-              class="w-full bg-bg-surface border border-border rounded px-3 py-2 text-sm text-text-1 outline-none focus:border-accent"
-            >
-              <option value="Supérieur à">Supérieur à</option>
-              <option value="Inférieur à">Inférieur à</option>
-            </select>
-          </div>
-          <div>
-            <label
-              class="text-text-3 text-xs uppercase tracking-wider block mb-1"
-              >Prix cible</label
-            >
-            <input
-              type="number"
-              id="alerte-prix"
-              placeholder="200.00"
-              step="0.01"
-              class="w-full bg-bg-surface border border-border rounded px-3 py-2 text-sm text-text-1 outline-none focus:border-accent"
-            />
-          </div>
-          <div>
-            <label
-              class="text-text-3 text-xs uppercase tracking-wider block mb-1"
-              >Email</label
-            >
-            <input
-              type="email"
-              id="alerte-email"
-              placeholder="ton@email.com"
-              class="w-full bg-bg-surface border border-border rounded px-3 py-2 text-sm text-text-1 outline-none focus:border-accent"
-            />
-          </div>
-        </div>
-        <p id="alerte-error" class="text-danger text-xs mt-3 hidden"></p>
-        <p id="alerte-success" class="text-green-400 text-xs mt-3 hidden"></p>
-
-        <!-- Code de gestion : affiché UNE SEULE FOIS après création -->
-        <div
-          id="code-gestion-box"
-          class="hidden mt-4 bg-bg-surface border border-warn rounded p-4"
+    <main class="max-w-6xl mx-auto px-6 md:px-8 py-12">
+      <!-- PAGE HEADER -->
+      <header class="mb-10">
+        <p
+          class="font-mono text-accent text-[11px] tracking-[0.22em] uppercase mb-2.5"
         >
-          <p class="text-warn text-xs uppercase tracking-wider mb-2">
-            ⚠ Code de gestion — note-le, il ne sera plus affiché
-          </p>
-          <p class="text-text-3 text-xs mb-3">
-            Ce code est la preuve d'appartenance de ton alerte. Il sera demandé
-            pour la suspendre, la réactiver ou l'annuler.
-          </p>
-          <div class="flex items-center gap-3">
-            <code
-              id="code-gestion-value"
-              class="font-mono text-text-1 text-lg select-all"
-            ></code>
-            <button
-              onclick="copierCode()"
-              class="text-xs text-text-3 border border-border px-3 py-1 rounded hover:text-accent hover:border-accent"
+          Surveillance des prix
+        </p>
+        <h1 class="text-3xl md:text-4xl font-semibold tracking-tight">
+          Mes alertes
+        </h1>
+        <p class="text-text-2 text-sm mt-2 max-w-md">
+          Sois prévenu par email dès qu'un actif franchit ton prix cible.
+        </p>
+      </header>
+
+      <div class="space-y-8">
+        <!-- BLOC FORMULAIRE (large, pleine largeur) -->
+        <section
+          class="bg-bg-card/80 border border-border rounded-2xl p-6 md:p-7 shadow-card"
+        >
+          <div class="flex items-center gap-3 mb-5">
+            <div
+              class="w-9 h-9 rounded-xl bg-warn/12 border border-warn/25 flex items-center justify-center"
             >
-              Copier
+              <span class="w-2.5 h-2.5 rounded-full bg-warn shadow-glow-warn"></span>
+            </div>
+            <div>
+              <h2 class="text-base font-semibold leading-tight">Créer une alerte</h2>
+              <p class="text-text-3 text-xs">Définis ta condition de déclenchement</p>
+            </div>
+          </div>
+
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1.4fr_auto] gap-4 lg:items-end"
+          >
+            <div>
+              <label class="field-label" for="alerte-ticker">Ticker</label>
+              <input
+                type="text"
+                id="alerte-ticker"
+                placeholder="AAPL"
+                class="field font-mono uppercase"
+              />
+            </div>
+            <div>
+              <label class="field-label" for="alerte-condition">Condition</label>
+              <select id="alerte-condition" class="field cursor-pointer">
+                <option value="Supérieur à">Supérieur à</option>
+                <option value="Inférieur à">Inférieur à</option>
+              </select>
+            </div>
+            <div>
+              <label class="field-label" for="alerte-prix">Prix cible</label>
+              <input
+                type="number"
+                id="alerte-prix"
+                placeholder="200.00"
+                step="0.01"
+                class="field font-mono"
+              />
+            </div>
+            <div>
+              <label class="field-label" for="alerte-email">Email</label>
+              <input
+                type="email"
+                id="alerte-email"
+                placeholder="ton@email.com"
+                class="field"
+              />
+            </div>
+            <button
+              id="alerte-btn"
+              onclick="creerAlerte()"
+              class="group bg-warn text-bg-deep font-semibold text-sm px-8 py-2.5 rounded-xl transition duration-200 hover:shadow-glow-warn hover:brightness-105 active:scale-[0.99] flex items-center justify-center gap-2 whitespace-nowrap sm:col-span-2 lg:col-span-1"
+            >
+              <span
+                class="w-1.5 h-1.5 rounded-full bg-bg-deep/70 transition-transform duration-200 group-hover:scale-125"
+              ></span>
+              Créer l'alerte
             </button>
           </div>
-        </div>
 
-        <button
-          id="alerte-btn"
-          onclick="creerAlerte()"
-          class="mt-4 bg-warn text-bg-deep font-semibold text-sm px-6 py-2 rounded hover:opacity-90"
-        >
-          Créer l'alerte
-        </button>
+          <p id="alerte-error" class="text-danger text-xs mt-3 hidden"></p>
+          <p id="alerte-success" class="text-green-400 text-xs mt-3 hidden"></p>
+
+          <!-- Code de gestion : affiché UNE SEULE FOIS après création -->
+          <div
+            id="code-gestion-box"
+            class="hidden mt-5 rounded-xl bg-warn/[0.06] border border-warn/30 p-4"
+          >
+            <p
+              class="text-warn text-[11px] font-semibold uppercase tracking-[0.12em] mb-2 flex items-center gap-2"
+            >
+              <span class="w-1.5 h-1.5 rounded-full bg-warn"></span>
+              Code de gestion — note-le, il ne sera plus affiché
+            </p>
+            <p class="text-text-3 text-xs mb-3 leading-relaxed">
+              Ce code est la preuve d'appartenance de ton alerte. Il sera demandé
+              pour la suspendre, la réactiver ou l'annuler.
+            </p>
+            <div class="flex items-center gap-3">
+              <code
+                id="code-gestion-value"
+                class="flex-1 font-mono text-text-1 text-lg select-all bg-bg-deep/60 border border-border rounded-lg px-3 py-2 tracking-wide"
+              ></code>
+              <button
+                onclick="copierCode()"
+                class="shrink-0 text-xs font-medium text-text-2 border border-border px-3.5 py-2 rounded-lg transition duration-200 hover:text-accent hover:border-accent/50 hover:bg-accent/5"
+              >
+                Copier
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- LISTE (pleine largeur, sous le formulaire) -->
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-base font-semibold">Alertes configurées</h2>
+            <span
+              id="alertes-count"
+              class="font-mono text-xs text-text-2 bg-bg-card border border-border rounded-full px-3 py-1"
+            ></span>
+          </div>
+
+          <div
+            id="alertes-empty"
+            class="hidden rounded-2xl border border-dashed border-border bg-bg-card/40 text-center py-16 px-6"
+          >
+            <div
+              class="w-12 h-12 mx-auto mb-4 rounded-2xl bg-bg-surface border border-border flex items-center justify-center"
+            >
+              <span class="w-2.5 h-2.5 rounded-full bg-text-3"></span>
+            </div>
+            <p class="text-text-2 text-sm">Aucune alerte pour le moment.</p>
+            <p class="text-text-3 text-xs mt-1">
+              Crée ta première alerte avec le formulaire ci-dessus.
+            </p>
+          </div>
+
+          <div id="alertes-list" class="space-y-3"></div>
+        </section>
       </div>
-
-      <h2 class="text-lg font-semibold mb-4">Mes alertes</h2>
-
-      <div id="alertes-empty" class="text-center py-12 hidden">
-        <p class="text-text-2">Aucune alerte pour le moment.</p>
-      </div>
-
-      <div id="alertes-list" class="space-y-3"></div>
     </main>
 
     <script>
@@ -202,66 +255,109 @@
         try {
           const response = await apiFetch(`${API_URL}/alertes`);
           const data = await response.json();
-          const alertes = data.alertes;
-
-          const list = document.getElementById("alertes-list");
-          const empty = document.getElementById("alertes-empty");
-
-          if (alertes.length === 0) {
-            empty.classList.remove("hidden");
-            list.innerHTML = "";
-            return;
-          }
-
-          empty.classList.add("hidden");
-          list.innerHTML = "";
-
-          alertes.forEach((alerte) => {
-            const ui = STATUS_UI[alerte.status] || STATUS_UI.CANCELLED;
-
-            const div = document.createElement("div");
-            div.className =
-              "bg-bg-card border border-border rounded-lg p-4 flex items-center justify-between";
-            div.innerHTML = `
-                        <div class="flex items-center gap-6">
-                            <span class="font-mono font-bold text-text-1">${alerte.ticker}</span>
-                            <span class="text-text-2 text-sm">${alerte.condition} <span class="font-mono text-accent">${alerte.prix_cible}$</span></span>
-                            <span class="text-text-3 text-xs">${alerte.email}</span>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <span class="${ui.color} ${ui.bg} text-xs px-2 py-1 rounded">${ui.label}</span>
-                            <div class="flex items-center gap-2">${boutonsActions(alerte)}</div>
-                        </div>
-                    `;
-            list.appendChild(div);
-          });
+          renderAlertes(data.alertes);
         } catch (error) {
           console.error("Erreur:", error);
+          // Fallback PREVIEW uniquement : si le backend est injoignable,
+          // on affiche des données de démonstration pour visualiser le design.
+          // En production (API /api disponible), ce bloc ne s'exécute jamais.
+          renderAlertes(DEMO_ALERTES);
         }
+      }
+
+      function renderAlertes(alertes) {
+        const list = document.getElementById("alertes-list");
+        const empty = document.getElementById("alertes-empty");
+        const count = document.getElementById("alertes-count");
+
+        if (count) {
+          const n = alertes.length;
+          count.textContent = `${n} alerte${n > 1 ? "s" : ""}`;
+        }
+
+        if (alertes.length === 0) {
+          empty.classList.remove("hidden");
+          list.innerHTML = "";
+          return;
+        }
+
+        empty.classList.add("hidden");
+        list.innerHTML = "";
+
+        alertes.forEach((alerte, i) => {
+          const ui = STATUS_UI[alerte.status] || STATUS_UI.CANCELLED;
+          const dimmed = alerte.status === "CANCELLED" ? "opacity-60" : "";
+
+          const div = document.createElement("div");
+          div.className =
+            "group relative bg-bg-card border border-border rounded-xl p-4 pl-5 flex items-center justify-between gap-4 transition duration-200 hover:border-accent/40 hover:shadow-glow-accent hover:-translate-y-0.5 " +
+            dimmed;
+          div.innerHTML = `
+            <span class="absolute left-0 top-3 bottom-3 w-0.5 rounded-full ${ui.bar}"></span>
+            <div class="flex items-center gap-4 min-w-0">
+              <div class="shrink-0 w-11 h-11 rounded-xl bg-bg-surface border border-border flex items-center justify-center font-mono font-bold text-xs text-text-1 transition duration-200 group-hover:border-accent/40">
+                ${alerte.ticker.slice(0, 4)}
+              </div>
+              <div class="min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="font-mono font-bold text-text-1 text-[15px]">${alerte.ticker}</span>
+                  <span class="text-text-2 text-sm">${alerte.condition}</span>
+                  <span class="font-mono text-accent font-bold text-sm">${alerte.prix_cible}$</span>
+                </div>
+                <p class="text-text-3 text-xs mt-1 truncate">${alerte.email}</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 shrink-0">
+              <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full border ${ui.bg} ${ui.color}">
+                <span class="w-1.5 h-1.5 rounded-full ${ui.dot}"></span>${ui.label}
+              </span>
+              <div class="flex items-center gap-2">${boutonsActions(alerte)}</div>
+            </div>
+          `;
+          list.appendChild(div);
+        });
       }
 
       // Présentation visuelle de chaque état.
       const STATUS_UI = {
-        ACTIVE: { label: "ACTIVE", color: "text-green-400", bg: "bg-green-400/10" },
-        SUSPENDED: { label: "SUSPENDUE", color: "text-warn", bg: "bg-warn/10" },
-        CANCELLED: { label: "ANNULÉE", color: "text-text-3", bg: "bg-bg-surface" },
+        ACTIVE: {
+          label: "ACTIVE",
+          color: "text-green-400",
+          bg: "bg-green-400/10 border-green-400/20",
+          dot: "bg-green-400 shadow-glow-green",
+          bar: "bg-green-400",
+        },
+        SUSPENDED: {
+          label: "SUSPENDUE",
+          color: "text-warn",
+          bg: "bg-warn/10 border-warn/25",
+          dot: "bg-warn",
+          bar: "bg-warn",
+        },
+        CANCELLED: {
+          label: "ANNULÉE",
+          color: "text-text-3",
+          bg: "bg-bg-surface border-border",
+          dot: "bg-text-3",
+          bar: "bg-text-3/40",
+        },
       };
 
       // Boutons proposés selon l'état courant (la machine à états côté front).
       function boutonsActions(alerte) {
         const btn = (action, label, hover) =>
-          `<button onclick="changerEtat(${alerte.id}, '${action}')" class="text-xs text-text-3 border border-border px-3 py-1 rounded hover:${hover}">${label}</button>`;
+          `<button onclick="changerEtat(${alerte.id}, '${action}')" class="text-xs font-medium text-text-2 border border-border px-3 py-1.5 rounded-lg transition duration-200 hover:bg-bg-surface hover:${hover}">${label}</button>`;
 
         if (alerte.status === "ACTIVE") {
           return (
-            btn("suspendre", "Suspendre", "text-warn hover:border-warn") +
-            btn("annuler", "Annuler", "text-danger hover:border-danger")
+            btn("suspendre", "Suspendre", "text-warn hover:border-warn/60") +
+            btn("annuler", "Annuler", "text-danger hover:border-danger/60")
           );
         }
         if (alerte.status === "SUSPENDED") {
           return (
-            btn("reactiver", "Réactiver", "text-green-400 hover:border-green-400") +
-            btn("annuler", "Annuler", "text-danger hover:border-danger")
+            btn("reactiver", "Réactiver", "text-green-400 hover:border-green-400/60") +
+            btn("annuler", "Annuler", "text-danger hover:border-danger/60")
           );
         }
         // CANCELLED : état terminal, aucune action.
@@ -298,6 +394,14 @@
       function copierCode() {
         const code = document.getElementById("code-gestion-value").textContent;
         navigator.clipboard.writeText(code);
+        const btn = event.currentTarget;
+        const original = btn.textContent;
+        btn.textContent = "Copié ✓";
+        btn.classList.add("text-green-400", "border-green-400/50");
+        setTimeout(() => {
+          btn.textContent = original;
+          btn.classList.remove("text-green-400", "border-green-400/50");
+        }, 1600);
       }
 
       function afficherErreur(msg) {
@@ -315,7 +419,17 @@
         document.getElementById("alerte-success").classList.add("hidden");
       }
 
+      // Données de démonstration (preview sans backend uniquement).
+      const DEMO_ALERTES = [
+        { id: 1, ticker: "AAPL", condition: "Supérieur à", prix_cible: 220.0, email: "moi@email.com", status: "ACTIVE" },
+        { id: 2, ticker: "NVDA", condition: "Inférieur à", prix_cible: 95.5, email: "moi@email.com", status: "ACTIVE" },
+        { id: 3, ticker: "TSLA", condition: "Supérieur à", prix_cible: 260.0, email: "moi@email.com", status: "SUSPENDED" },
+        { id: 4, ticker: "SPY", condition: "Inférieur à", prix_cible: 500.0, email: "moi@email.com", status: "CANCELLED" },
+      ];
+
       chargerAlertes();
     </script>
+      <script src="js/ticker.js"></script>
+    <script src="js/footer.js"></script>
   </body>
 </html>
