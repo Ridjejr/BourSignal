@@ -110,20 +110,21 @@ jobs:
     name: Integration (docker compose up)
     runs-on: ubuntu-latest
     needs: [build-backend-image, build-frontend-image]
+    env:
+      DB_PASSWORD: rootpass
+      MYSQL_ROOT_PASSWORD: rootpass
+      SECRET_KEY: ci-secret
+      FINNHUB_API_KEY: ""
     steps:
       - uses: actions/checkout@v4
 
       - name: Start the stack
-        env:
-          DB_PASSWORD: rootpass
-          SECRET_KEY: ci-secret
-          FINNHUB_API_KEY: ""
         run: docker compose up -d --build
 
       - name: Wait for backend /api/health
         run: |
           for i in $(seq 1 30); do
-            if curl -fsS http://localhost:5000/api/health >/dev/null; then
+            if curl -fsS http://localhost:3000/api/health >/dev/null; then
               echo "Backend is up"
               exit 0
             fi
