@@ -116,6 +116,7 @@ jobs:
       - name: Start the stack
         env:
           DB_PASSWORD: rootpass
+          MYSQL_ROOT_PASSWORD: rootpass
           SECRET_KEY: ci-secret
           FINNHUB_API_KEY: ""
         run: docker compose up -d --build
