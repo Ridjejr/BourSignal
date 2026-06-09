@@ -110,15 +110,15 @@ jobs:
     name: Integration (docker compose up)
     runs-on: ubuntu-latest
     needs: [build-backend-image, build-frontend-image]
+    env:
+      DB_PASSWORD: rootpass
+      MYSQL_ROOT_PASSWORD: rootpass
+      SECRET_KEY: ci-secret
+      FINNHUB_API_KEY: ""
     steps:
       - uses: actions/checkout@v4
 
       - name: Start the stack
-        env:
-          DB_PASSWORD: rootpass
-          MYSQL_ROOT_PASSWORD: rootpass
-          SECRET_KEY: ci-secret
-          FINNHUB_API_KEY: ""
         run: docker compose up -d --build
 
       - name: Wait for backend /api/health
