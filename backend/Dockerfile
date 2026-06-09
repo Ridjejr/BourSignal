@@ -1,20 +1,33 @@
-# Étape 1 : On part d'une image Python légère
+# --- Etape 1 : Installation des dependances ---
+FROM python:3.13-slim AS builder
+WORKDIR /build
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir --prefix=/build/deps -r requirements.txt
+
+
+# --- Etape 2 : Image finale (sans les outils de build) ---
 FROM python:3.13-slim
 
-# Étape 2 : On définit le dossier de travail dans le conteneur
+# Utilisateur non-root pour la securite
+RUN groupadd -r appuser && useradd -r -g appuser -d /app -s /sbin/nologin appuser
+
 WORKDIR /app
 
-# Étape 3 : On copie d'abord les dépendances (pour le cache Docker)
-COPY requirements.txt .
+# Recuperer uniquement les librairies compilees depuis le builder
+COPY --from=builder /build/deps /usr/local
 
-# Étape 4 : On installe les dépendances
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Étape 5 : On copie tout le code source
+# Copier le code source (app/, config/, run.py et autres fichiers du projet)
 COPY . .
 
-# Étape 6 : On expose le port 5000
+# Donner les droits a appuser puis basculer dessus
+RUN chown -R appuser:appuser /app
+USER appuser
+
 EXPOSE 5000
 
-# Étape 7 : On lance le serveur avec gunicorn (production)
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "run:app"]
+# Verifie toutes les 30s que l'API repond. start-period=15s laisse le temps a gunicorn de demarrer.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:5000/api/health')" || exit 1
+
+CMD ["gunicorn", "-w", "4", "--preload", "-b", "0.0.0.0:5000", "--access-logfile", "-", "run:app"]

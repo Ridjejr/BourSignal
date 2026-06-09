@@ -4,8 +4,10 @@ services:
     container_name: boursignal-db
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD requis dans .env}
       MYSQL_DATABASE: boursignal
+      MYSQL_USER: missilouAdmin
+      MYSQL_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD requis dans .env}
     ports:
       - "3307:3306"
     volumes:
@@ -26,11 +28,11 @@ services:
     environment:
       DB_HOST: db
       DB_PORT: 3306
-      DB_USER: root
-      DB_PASSWORD: ${DB_PASSWORD:-root}
+      DB_USER: missilouAdmin
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD requis dans .env}
       DB_NAME: boursignal
       FINNHUB_API_KEY: ${FINNHUB_API_KEY:-}
-      SECRET_KEY: ${SECRET_KEY:-docker-secret-key}
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY requis dans .env}
       # Envoi d'emails (Gmail SMTP). Renseigne SMTP_USER / SMTP_PASSWORD dans .env
       SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
       SMTP_PORT: ${SMTP_PORT:-587}
@@ -38,17 +40,18 @@ services:
       SMTP_PASSWORD: ${SMTP_PASSWORD:-}
       EMAIL_FROM: ${EMAIL_FROM:-}
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
-    ports:
-      - "5000:5000"
+    expose:
+      - "5000"
 
   frontend:
     build: ./frontend
     container_name: boursignal-front
     restart: always
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     ports:
-      - "3000:80"
+      - "3000:8080"
 
 volumes:
   mysql_data:
