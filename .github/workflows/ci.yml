@@ -34,6 +34,26 @@ jobs:
       - name: Run ruff
         run: ruff check .
 
+  security-backend:
+    name: Security backend (bandit)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install bandit
+        run: pip install bandit
+
+      - name: Run bandit
+        run: bandit -r app/ -ll
+
   test-backend:
     name: Test backend (pytest)
     runs-on: ubuntu-latest
@@ -69,7 +89,7 @@ jobs:
   build-backend-image:
     name: Build backend image
     runs-on: ubuntu-latest
-    needs: [lint-backend, test-backend]
+    needs: [lint-backend, test-backend, security-backend]
     steps:
       - uses: actions/checkout@v4
 
@@ -85,6 +105,14 @@ jobs:
           tags: boursignal-backend:ci
           cache-from: type=gha,scope=backend
           cache-to: type=gha,scope=backend,mode=max
+
+      - name: Scan backend image (Trivy)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: boursignal-backend:ci
+          format: table
+          exit-code: 0
+          severity: CRITICAL,HIGH
 
   build-frontend-image:
     name: Build frontend image
@@ -105,6 +133,14 @@ jobs:
           tags: boursignal-frontend:ci
           cache-from: type=gha,scope=frontend
           cache-to: type=gha,scope=frontend,mode=max
+
+      - name: Scan frontend image (Trivy)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: boursignal-frontend:ci
+          format: table
+          exit-code: 0
+          severity: CRITICAL,HIGH
 
   integration:
     name: Integration (docker compose up)
