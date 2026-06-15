@@ -106,13 +106,21 @@ jobs:
           cache-from: type=gha,scope=backend
           cache-to: type=gha,scope=backend,mode=max
 
-      - name: Scan backend image (Trivy)
+      - name: Scan backend image - bloque sur CRITICAL (Trivy)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: boursignal-backend:ci
+          format: table
+          exit-code: 1
+          severity: CRITICAL
+
+      - name: Scan backend image - rapport HIGH informatif (Trivy)
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: boursignal-backend:ci
           format: table
           exit-code: 0
-          severity: CRITICAL,HIGH
+          severity: HIGH
 
   build-frontend-image:
     name: Build frontend image
@@ -134,13 +142,21 @@ jobs:
           cache-from: type=gha,scope=frontend
           cache-to: type=gha,scope=frontend,mode=max
 
-      - name: Scan frontend image (Trivy)
+      - name: Scan frontend image - bloque sur CRITICAL (Trivy)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: boursignal-frontend:ci
+          format: table
+          exit-code: 1
+          severity: CRITICAL
+
+      - name: Scan frontend image - rapport HIGH informatif (Trivy)
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: boursignal-frontend:ci
           format: table
           exit-code: 0
-          severity: CRITICAL,HIGH
+          severity: HIGH
 
   integration:
     name: Integration (docker compose up)
