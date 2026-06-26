@@ -6,3 +6,4 @@ cryptography==43.*
 python-dotenv==1.0.*
 requests==2.32.*
 gunicorn==23.*
+prometheus-client==0.21.*

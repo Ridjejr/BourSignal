@@ -20,8 +20,13 @@ COPY --from=builder /build/deps /usr/local
 # Copier le code source (app/, config/, run.py et autres fichiers du projet)
 COPY . .
 
+# Dossier partage ou chaque worker Gunicorn ecrit ses metriques
+# (necessaire car prometheus_client n'agrege pas en memoire entre processus)
+ENV PROMETHEUS_MULTIPROC_DIR=/tmp/prometheus_multiproc
+RUN mkdir -p /tmp/prometheus_multiproc
+
 # Donner les droits a appuser puis basculer dessus
-RUN chown -R appuser:appuser /app
+RUN chown -R appuser:appuser /app /tmp/prometheus_multiproc
 USER appuser
 
 EXPOSE 5000
@@ -30,4 +35,4 @@ EXPOSE 5000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:5000/api/health')" || exit 1
 
-CMD ["gunicorn", "-w", "4", "--preload", "-b", "0.0.0.0:5000", "--access-logfile", "-", "run:app"]
+CMD ["gunicorn", "-c", "gunicorn.conf.py", "-w", "4", "--preload", "-b", "0.0.0.0:5000", "--access-logfile", "-", "run:app"]

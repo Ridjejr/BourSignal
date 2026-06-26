@@ -154,6 +154,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Create shared monitoring network
+        run: docker network create monitoring || true
+
       - name: Start the stack
         run: docker compose up -d --build
 

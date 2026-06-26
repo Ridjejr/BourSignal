@@ -42,6 +42,9 @@ services:
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
     expose:
       - "5000"
+    networks:
+      - default
+      - monitoring
 
   frontend:
     build: ./frontend
@@ -55,3 +58,10 @@ services:
 
 volumes:
   mysql_data:
+
+networks:
+  default:
+  # Reseau partage avec ObservaStack pour que Prometheus puisse scraper /metrics.
+  # Doit etre cree au prealable : docker network create monitoring
+  monitoring:
+    external: true
