@@ -2,9 +2,9 @@ from flask import Flask
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 
-from config.settings import Config
 from app.logging_config import configure_logging
 from app.metrics import init_metrics
+from config.settings import Config
 
 db = SQLAlchemy()
 

@@ -1,11 +1,16 @@
+import logging
 import os
 import time
-import logging
 
-from flask import request, Response
+from flask import Response, request
 from prometheus_client import (
-    Counter, Histogram, Gauge, CollectorRegistry, multiprocess,
-    generate_latest, CONTENT_TYPE_LATEST
+    CONTENT_TYPE_LATEST,
+    CollectorRegistry,
+    Counter,
+    Gauge,
+    Histogram,
+    generate_latest,
+    multiprocess,
 )
 
 logger = logging.getLogger(__name__)
