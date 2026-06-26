@@ -3,12 +3,16 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 
 from config.settings import Config
+from app.logging_config import configure_logging
+from app.metrics import init_metrics
 
 db = SQLAlchemy()
 
 
 def create_app(config_object=Config):
     """Crée et configure l'application Flask."""
+
+    configure_logging()
 
     # 1. Créer l'app
     app = Flask(__name__)
@@ -19,6 +23,9 @@ def create_app(config_object=Config):
     # 3. Connecter la base de données
     db.init_app(app)
     CORS(app, supports_credentials=True)
+
+    # 4. Instrumentation Prometheus (metriques + logs JSON par requete)
+    init_metrics(app)
 
     # 4. Enregistrer les routes
     from app.controllers import api
