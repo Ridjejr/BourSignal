@@ -37,9 +37,8 @@
         <div>
           <p class="text-text-2 text-xs font-semibold uppercase tracking-[0.14em] mb-4">Légal</p>
           <ul class="space-y-2.5 text-sm">
-            <li><a href="#" class="text-text-2 hover:text-text-1 transition">Mentions légales</a></li>
-            <li><a href="#" class="text-text-2 hover:text-text-1 transition">Politique de confidentialité</a></li>
-            <li><a href="#" class="text-text-2 hover:text-text-1 transition">Conditions d'utilisation</a></li>
+            <li><a href="mentions-legales.html" class="text-text-2 hover:text-text-1 transition">Mentions légales</a></li>
+            <li><a href="politique-confidentialite.html" class="text-text-2 hover:text-text-1 transition">Politique de confidentialité</a></li>
           </ul>
         </div>
       </div>
