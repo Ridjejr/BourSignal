@@ -28,6 +28,18 @@
         <a href="watchlist.html" class="nav-pill is-active">Watchlist</a>
         <a href="alertes.html" class="nav-pill">Alertes</a>
       </div>
+      <button
+        id="nav-toggle"
+        class="sm:hidden ml-auto p-2 rounded-lg hover:bg-bg-card transition-colors"
+        aria-label="Menu"
+        aria-expanded="false"
+      >
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
       <div
         id="nav-ticker"
         class="nav-ticker ml-auto hidden lg:flex items-stretch bg-bg-card border border-border rounded-xl overflow-hidden"
@@ -49,6 +61,14 @@
         </div>
       </div>
     </nav>
+    <div
+      id="nav-mobile-menu"
+      class="hidden sm:hidden flex-col gap-1 px-6 py-3 bg-bg-deep border-b border-border/80"
+    >
+      <a href="index.html" class="nav-pill w-full">Accueil</a>
+      <a href="watchlist.html" class="nav-pill is-active w-full">Watchlist</a>
+      <a href="alertes.html" class="nav-pill w-full">Alertes</a>
+    </div>
 
     <main class="max-w-6xl mx-auto px-6 md:px-8 py-12">
       <div class="flex justify-between items-end mb-8">
@@ -222,5 +242,6 @@
     </script>
       <script src="js/ticker.js"></script>
     <script src="js/footer.js"></script>
+    <script src="js/nav.js"></script>
   </body>
 </html>

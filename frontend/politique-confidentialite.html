@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BourSignal — Politique de confidentialité</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/tailwind.config.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body class="bg-bg-deep font-sans text-text-1 min-h-screen antialiased">
+    <nav
+      class="bg-bg-deep/80 backdrop-blur-xl border-b border-border/80 px-6 md:px-12 py-3 flex items-center gap-3 sticky top-0 z-50"
+    >
+      <a href="index.html" class="flex items-center gap-2.5 mr-1 shrink-0">
+        <svg width="27" height="22" viewBox="0 0 27 22" fill="none" class="overflow-visible">
+          <polyline points="1,18 7.5,18 7.5,12 14,12 14,7 20.5,7 20.5,2.5 26,2.5" stroke="#A78BFA" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+          <circle cx="26" cy="2.5" r="2.6" fill="#A78BFA"></circle>
+        </svg>
+        <span class="font-mono font-bold text-lg tracking-tight"><span class="text-text-1">BOUR</span><span class="text-accent">SIGNAL</span></span>
+      </a>
+      <div class="hidden sm:flex items-center gap-1.5 ml-2">
+        <a href="index.html" class="nav-pill">Accueil</a>
+        <a href="watchlist.html" class="nav-pill">Watchlist</a>
+        <a href="alertes.html" class="nav-pill">Alertes</a>
+      </div>
+      <button
+        id="nav-toggle"
+        class="sm:hidden ml-auto p-2 rounded-lg hover:bg-bg-card transition-colors"
+        aria-label="Menu"
+        aria-expanded="false"
+      >
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </nav>
+    <div
+      id="nav-mobile-menu"
+      class="hidden sm:hidden flex-col gap-1 px-6 py-3 bg-bg-deep border-b border-border/80"
+    >
+      <a href="index.html" class="nav-pill w-full">Accueil</a>
+      <a href="watchlist.html" class="nav-pill w-full">Watchlist</a>
+      <a href="alertes.html" class="nav-pill w-full">Alertes</a>
+    </div>
+
+    <main class="max-w-3xl mx-auto px-6 md:px-8 py-16">
+      <p class="font-mono text-accent text-[11px] tracking-[0.22em] uppercase mb-3">
+        Informations légales
+      </p>
+      <h1 class="text-3xl md:text-4xl font-semibold tracking-tight mb-10">
+        Politique de confidentialité
+      </h1>
+
+      <div class="space-y-10 text-text-2 text-sm leading-relaxed">
+        <section>
+          <h2 class="text-text-1 text-base font-semibold mb-2.5">Donnée collectée</h2>
+          <p>
+            Pour utiliser le service d'alertes, BourSignal vous demande une adresse
+            email. C'est la seule donnée personnelle collectée par le site.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="text-text-1 text-base font-semibold mb-2.5">Pourquoi cette donnée est collectée</h2>
+          <p>
+            Votre email est utilisé uniquement pour vous envoyer une notification
+            lorsque le seuil de prix que vous avez défini sur un actif est atteint.
+            Il n'est utilisé à aucune autre fin (pas de newsletter, pas de prospection).
+          </p>
+        </section>
+
+        <section>
+          <h2 class="text-text-1 text-base font-semibold mb-2.5">Base légale</h2>
+          <p>
+            Le traitement de votre email repose sur votre consentement : vous le
+            fournissez volontairement au moment de créer une alerte.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="text-text-1 text-base font-semibold mb-2.5">Destinataires de la donnée</h2>
+          <p>
+            Votre email est utilisé par notre service d'envoi de notifications
+            (SMTP Gmail) pour vous transmettre l'alerte. Il n'est jamais vendu,
+            partagé ou transmis à d'autres tiers.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="text-text-1 text-base font-semibold mb-2.5">Durée de conservation</h2>
+          <p>
+            Votre email est conservé tant que l'alerte associée existe. Il est
+            supprimé dès que vous supprimez l'alerte correspondante.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="text-text-1 text-base font-semibold mb-2.5">Vos droits</h2>
+          <p>
+            Conformément au RGPD, vous disposez d'un droit d'accès, de rectification
+            et de suppression de vos données. Pour l'exercer, contactez-nous via
+            l'adresse indiquée dans les
+            <a href="mentions-legales.html" class="text-accent hover:underline">mentions légales</a>.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="text-text-1 text-base font-semibold mb-2.5">Sécurité</h2>
+          <p>
+            Les échanges avec le site sont chiffrés (HTTPS). L'accès aux données
+            est limité aux fonctionnalités nécessaires au fonctionnement du service.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="text-text-1 text-base font-semibold mb-2.5">Cookies</h2>
+          <p>
+            Ce site utilise un cookie de session strictement nécessaire au
+            fonctionnement de l'application (gestion de la connexion). Aucun
+            cookie de tracking ou publicitaire n'est utilisé.
+          </p>
+        </section>
+      </div>
+    </main>
+
+    <script src="js/footer.js"></script>
+    <script src="js/nav.js"></script>
+  </body>
+</html>
